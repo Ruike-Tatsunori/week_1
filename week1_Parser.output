@@ -1,0 +1,356 @@
+   0  $accept : %entry% $end
+
+   1  main : expr EOF
+
+   2  expr : IF arith_expr THEN arith_expr ELSE arith_expr
+   3       | arith_expr
+
+   4  arith_expr : arith_expr ADD factor_expr
+   5             | arith_expr SUB factor_expr
+   6             | arith_expr MUL factor_expr
+   7             | arith_expr DIV factor_expr
+   8             | arith_expr EQ factor_expr
+   9             | arith_expr LT factor_expr
+  10             | factor_expr
+
+  11  factor_expr : atomic_expr
+
+  12  atomic_expr : INT
+  13              | BOOL
+  14              | LPAR expr RPAR
+
+  15  var : ID
+
+  16  %entry% : '\001' main
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	.  error
+
+	%entry%  goto 2
+
+
+state 1
+	%entry% : '\001' . main  (16)
+
+	INT  shift 3
+	BOOL  shift 4
+	IF  shift 5
+	LPAR  shift 6
+	.  error
+
+	main  goto 7
+	expr  goto 8
+	arith_expr  goto 9
+	factor_expr  goto 10
+	atomic_expr  goto 11
+
+
+state 2
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 3
+	atomic_expr : INT .  (12)
+
+	.  reduce 12
+
+
+state 4
+	atomic_expr : BOOL .  (13)
+
+	.  reduce 13
+
+
+state 5
+	expr : IF . arith_expr THEN arith_expr ELSE arith_expr  (2)
+
+	INT  shift 3
+	BOOL  shift 4
+	LPAR  shift 6
+	.  error
+
+	arith_expr  goto 12
+	factor_expr  goto 10
+	atomic_expr  goto 11
+
+
+state 6
+	atomic_expr : LPAR . expr RPAR  (14)
+
+	INT  shift 3
+	BOOL  shift 4
+	IF  shift 5
+	LPAR  shift 6
+	.  error
+
+	expr  goto 13
+	arith_expr  goto 9
+	factor_expr  goto 10
+	atomic_expr  goto 11
+
+
+state 7
+	%entry% : '\001' main .  (16)
+
+	.  reduce 16
+
+
+state 8
+	main : expr . EOF  (1)
+
+	EOF  shift 14
+	.  error
+
+
+state 9
+	expr : arith_expr .  (3)
+	arith_expr : arith_expr . ADD factor_expr  (4)
+	arith_expr : arith_expr . SUB factor_expr  (5)
+	arith_expr : arith_expr . MUL factor_expr  (6)
+	arith_expr : arith_expr . DIV factor_expr  (7)
+	arith_expr : arith_expr . EQ factor_expr  (8)
+	arith_expr : arith_expr . LT factor_expr  (9)
+
+	EQ  shift 15
+	LT  shift 16
+	ADD  shift 17
+	SUB  shift 18
+	MUL  shift 19
+	DIV  shift 20
+	RPAR  reduce 3
+	EOF  reduce 3
+
+
+state 10
+	arith_expr : factor_expr .  (10)
+
+	.  reduce 10
+
+
+state 11
+	factor_expr : atomic_expr .  (11)
+
+	.  reduce 11
+
+
+state 12
+	expr : IF arith_expr . THEN arith_expr ELSE arith_expr  (2)
+	arith_expr : arith_expr . ADD factor_expr  (4)
+	arith_expr : arith_expr . SUB factor_expr  (5)
+	arith_expr : arith_expr . MUL factor_expr  (6)
+	arith_expr : arith_expr . DIV factor_expr  (7)
+	arith_expr : arith_expr . EQ factor_expr  (8)
+	arith_expr : arith_expr . LT factor_expr  (9)
+
+	EQ  shift 15
+	THEN  shift 21
+	LT  shift 16
+	ADD  shift 17
+	SUB  shift 18
+	MUL  shift 19
+	DIV  shift 20
+	.  error
+
+
+state 13
+	atomic_expr : LPAR expr . RPAR  (14)
+
+	RPAR  shift 22
+	.  error
+
+
+state 14
+	main : expr EOF .  (1)
+
+	.  reduce 1
+
+
+state 15
+	arith_expr : arith_expr EQ . factor_expr  (8)
+
+	INT  shift 3
+	BOOL  shift 4
+	LPAR  shift 6
+	.  error
+
+	factor_expr  goto 23
+	atomic_expr  goto 11
+
+
+state 16
+	arith_expr : arith_expr LT . factor_expr  (9)
+
+	INT  shift 3
+	BOOL  shift 4
+	LPAR  shift 6
+	.  error
+
+	factor_expr  goto 24
+	atomic_expr  goto 11
+
+
+state 17
+	arith_expr : arith_expr ADD . factor_expr  (4)
+
+	INT  shift 3
+	BOOL  shift 4
+	LPAR  shift 6
+	.  error
+
+	factor_expr  goto 25
+	atomic_expr  goto 11
+
+
+state 18
+	arith_expr : arith_expr SUB . factor_expr  (5)
+
+	INT  shift 3
+	BOOL  shift 4
+	LPAR  shift 6
+	.  error
+
+	factor_expr  goto 26
+	atomic_expr  goto 11
+
+
+state 19
+	arith_expr : arith_expr MUL . factor_expr  (6)
+
+	INT  shift 3
+	BOOL  shift 4
+	LPAR  shift 6
+	.  error
+
+	factor_expr  goto 27
+	atomic_expr  goto 11
+
+
+state 20
+	arith_expr : arith_expr DIV . factor_expr  (7)
+
+	INT  shift 3
+	BOOL  shift 4
+	LPAR  shift 6
+	.  error
+
+	factor_expr  goto 28
+	atomic_expr  goto 11
+
+
+state 21
+	expr : IF arith_expr THEN . arith_expr ELSE arith_expr  (2)
+
+	INT  shift 3
+	BOOL  shift 4
+	LPAR  shift 6
+	.  error
+
+	arith_expr  goto 29
+	factor_expr  goto 10
+	atomic_expr  goto 11
+
+
+state 22
+	atomic_expr : LPAR expr RPAR .  (14)
+
+	.  reduce 14
+
+
+state 23
+	arith_expr : arith_expr EQ factor_expr .  (8)
+
+	.  reduce 8
+
+
+state 24
+	arith_expr : arith_expr LT factor_expr .  (9)
+
+	.  reduce 9
+
+
+state 25
+	arith_expr : arith_expr ADD factor_expr .  (4)
+
+	.  reduce 4
+
+
+state 26
+	arith_expr : arith_expr SUB factor_expr .  (5)
+
+	.  reduce 5
+
+
+state 27
+	arith_expr : arith_expr MUL factor_expr .  (6)
+
+	.  reduce 6
+
+
+state 28
+	arith_expr : arith_expr DIV factor_expr .  (7)
+
+	.  reduce 7
+
+
+state 29
+	expr : IF arith_expr THEN arith_expr . ELSE arith_expr  (2)
+	arith_expr : arith_expr . ADD factor_expr  (4)
+	arith_expr : arith_expr . SUB factor_expr  (5)
+	arith_expr : arith_expr . MUL factor_expr  (6)
+	arith_expr : arith_expr . DIV factor_expr  (7)
+	arith_expr : arith_expr . EQ factor_expr  (8)
+	arith_expr : arith_expr . LT factor_expr  (9)
+
+	EQ  shift 15
+	ELSE  shift 30
+	LT  shift 16
+	ADD  shift 17
+	SUB  shift 18
+	MUL  shift 19
+	DIV  shift 20
+	.  error
+
+
+state 30
+	expr : IF arith_expr THEN arith_expr ELSE . arith_expr  (2)
+
+	INT  shift 3
+	BOOL  shift 4
+	LPAR  shift 6
+	.  error
+
+	arith_expr  goto 31
+	factor_expr  goto 10
+	atomic_expr  goto 11
+
+
+state 31
+	expr : IF arith_expr THEN arith_expr ELSE arith_expr .  (2)
+	arith_expr : arith_expr . ADD factor_expr  (4)
+	arith_expr : arith_expr . SUB factor_expr  (5)
+	arith_expr : arith_expr . MUL factor_expr  (6)
+	arith_expr : arith_expr . DIV factor_expr  (7)
+	arith_expr : arith_expr . EQ factor_expr  (8)
+	arith_expr : arith_expr . LT factor_expr  (9)
+
+	EQ  shift 15
+	LT  shift 16
+	ADD  shift 17
+	SUB  shift 18
+	MUL  shift 19
+	DIV  shift 20
+	RPAR  reduce 2
+	EOF  reduce 2
+
+
+Rules never reduced:
+	var : ID  (15)
+
+
+21 terminals, 8 nonterminals
+17 grammar rules, 32 states
